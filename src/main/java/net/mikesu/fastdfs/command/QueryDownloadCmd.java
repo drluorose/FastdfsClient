@@ -1,11 +1,11 @@
 package net.mikesu.fastdfs.command;
 
+import net.mikesu.fastdfs.data.Result;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.util.Arrays;
-
-import net.mikesu.fastdfs.data.Result;
 
 public class QueryDownloadCmd extends AbstractCmd<String> {
 
@@ -22,7 +22,6 @@ public class QueryDownloadCmd extends AbstractCmd<String> {
 			return result;
 		}else{
 			Result<String> result = new Result<String>(response.getCode());
-			//TODO:根据不同的code给不同的Error Message
 			result.setMessage("");
 			return result;
 		}

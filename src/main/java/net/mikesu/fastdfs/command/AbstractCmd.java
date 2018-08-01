@@ -12,7 +12,7 @@ public abstract class AbstractCmd<T> implements Command<T> {
 	protected byte responseCmd;
 	protected long responseSize;
 	protected byte[] body1;
-	protected long body2Len = 0l;
+	protected long body2Len = 0L;
 	
 	protected void request(OutputStream socketOut)throws IOException {
 		socketOut.write(getRequestHeaderAndBody1());
