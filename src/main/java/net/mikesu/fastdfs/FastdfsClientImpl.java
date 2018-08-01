@@ -8,6 +8,7 @@ import net.mikesu.fastdfs.data.GroupInfo;
 import net.mikesu.fastdfs.data.Result;
 import net.mikesu.fastdfs.data.StorageInfo;
 import net.mikesu.fastdfs.data.UploadStorage;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FastdfsClientImpl implements FastdfsClient {
 
     private static Logger logger = LoggerFactory.getLogger(FastdfsClientImpl.class);
+
     private GenericKeyedObjectPool<String, TrackerClient> trackerClientPool;
+
     private GenericKeyedObjectPool<String, StorageClient> storageClientPool;
+
     private List<String> trackerAddrs = new ArrayList<String>();
+
     private Map<String, String> storageIpMap = new ConcurrentHashMap<String, String>();
 
     public FastdfsClientImpl(List<String> trackerAddrs) throws Exception {
@@ -43,7 +48,6 @@ public class FastdfsClientImpl implements FastdfsClient {
         this.trackerClientPool = trackerClientPool;
         this.storageClientPool = storageClientPool;
     }
-
 
     @Override
     public void close() {
@@ -64,11 +68,14 @@ public class FastdfsClientImpl implements FastdfsClient {
                     if (result2.getCode() == 0) {
                         List<StorageInfo> storageInfos = result2.getData();
                         for (StorageInfo storageInfo : storageInfos) {
-                            String hostPort = storageInfo.getDomainName();
-                            if (storageInfo.getStorageHttpPort() != 80) {
-                                hostPort = hostPort + ":" + storageInfo.getStorageHttpPort();
+                            String hostDomain = storageInfo.getDomainName();
+                            if (StringUtils.isBlank(hostDomain)) {
+                                hostDomain = storageInfo.getIpAddr();
                             }
-                            storageIpMap.put(storageInfo.getIpAddr() + ":" + storageInfo.getStoragePort(), hostPort);
+                            if (storageInfo.getStorageHttpPort() != 80) {
+                                hostDomain = hostDomain + ":" + storageInfo.getStorageHttpPort();
+                            }
+                            storageIpMap.put(storageInfo.getIpAddr() + ":" + storageInfo.getStoragePort(), hostDomain);
                         }
                     }
                 }
@@ -96,7 +103,7 @@ public class FastdfsClientImpl implements FastdfsClient {
 
     @Override
     public Boolean setMeta(String fileId, Map<String, String> meta)
-            throws Exception {
+        throws Exception {
         String trackerAddr = getTrackerAddr();
         TrackerClient trackerClient = null;
         StorageClient storageClient = null;
@@ -172,7 +179,7 @@ public class FastdfsClientImpl implements FastdfsClient {
             Result<String> result = trackerClient.getDownloadStorageAddr(fastDfsFile.group, fastDfsFile.fileName);
             if (result.getCode() == 0) {
                 String hostPort = getDownloadHostPort(result.getData());
-                url = "http://" + hostPort + "/" + fastDfsFile.fileName;
+                url = "http://" + hostPort + "/" + fastDfsFile.getFileName();
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -296,6 +303,7 @@ public class FastdfsClientImpl implements FastdfsClient {
 
     private class FastDfsFile {
         private String group;
+
         private String fileName;
 
         public FastDfsFile(String fileId) {
@@ -305,7 +313,10 @@ public class FastdfsClientImpl implements FastdfsClient {
             fileName = fileId.substring(pos + 1);
         }
 
-    }
+        public String getFileName() {
+            return group + "/" + fileName;
+        }
 
+    }
 
 }

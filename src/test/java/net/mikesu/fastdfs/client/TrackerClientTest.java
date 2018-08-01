@@ -16,34 +16,34 @@ public class TrackerClientTest {
 
 	@Test
 	public void testGetUploadStorageAddr() throws NumberFormatException, UnknownHostException, IOException {
-		TrackerClient trackerClient = new TrackerClientImpl("10.125.176.138:22122");
+		TrackerClient trackerClient = new TrackerClientImpl("192.168.31.234:22122");
 		Result<UploadStorage> result = trackerClient.getUploadStorage();
 		assertEquals(0, result.getCode());
-		assertEquals("10.125.176.138:23000",result.getData().getAddress());
+		assertEquals("192.168.31.234:23000",result.getData().getAddress());
 		trackerClient.close();
 	}
 	
 	@Test
 	public void testGetDownloadStorageAddr() throws IOException {
-		TrackerClient trackerClient = new TrackerClientImpl("10.125.176.138:22122");
+		TrackerClient trackerClient = new TrackerClientImpl("192.168.31.234:22122");
 		Result<String> result = trackerClient.getDownloadStorageAddr("group1","M00/00/00/Cn2wilM00puAa0xSAANVQ4eIxAM143.jpg");
 		assertEquals(0, result.getCode());
-		assertEquals("10.125.176.138:23000",result.getData());
+		assertEquals("192.168.31.234:23000",result.getData());
 		trackerClient.close();
 	}
 	
 	@Test
 	public void testGetUpdateStorageAddr() throws IOException {
-		TrackerClient trackerClient = new TrackerClientImpl("10.125.176.138:22122");
+		TrackerClient trackerClient = new TrackerClientImpl("192.168.31.234:22122");
 		Result<String> result = trackerClient.getUpdateStorageAddr("group1","M00/00/00/Cn2wilM00puAa0xSAANVQ4eIxAM143.jpg");
 		assertEquals(0, result.getCode());
-		assertEquals("10.125.176.138:23000",result.getData());
+		assertEquals("192.168.31.234:23000",result.getData());
 		trackerClient.close();
 	}
 	
 	@Test
 	public void testGetGroupInfos() throws NumberFormatException, UnknownHostException, IOException{
-		TrackerClient trackerClient = new TrackerClientImpl("10.125.176.138:22122");
+		TrackerClient trackerClient = new TrackerClientImpl("192.168.31.234:22122");
 		Result<List<GroupInfo>> groupInfos = trackerClient.getGroupInfos();
 		assertNotNull(groupInfos);
 		trackerClient.close();

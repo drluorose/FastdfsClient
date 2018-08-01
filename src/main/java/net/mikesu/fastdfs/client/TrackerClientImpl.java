@@ -49,7 +49,8 @@ public class TrackerClientImpl implements TrackerClient{
 	}
 	
 
-	public void close() throws IOException{
+	@Override
+    public void close() throws IOException{
 		Socket socket = getSocket();
 		Command<Boolean> command = new CloseCmd();
 		command.exec(socket);
@@ -58,30 +59,35 @@ public class TrackerClientImpl implements TrackerClient{
 	}
 
 	
-	public Result<UploadStorage> getUploadStorage() throws IOException{
+	@Override
+    public Result<UploadStorage> getUploadStorage() throws IOException{
 		Socket socket = getSocket();
 		Command<UploadStorage> command = new QueryUploadCmd();
 		return command.exec(socket);
 	}
 	
-	public Result<String> getUpdateStorageAddr(String group,String fileName) throws IOException{
+	@Override
+    public Result<String> getUpdateStorageAddr(String group, String fileName) throws IOException{
 		Socket socket = getSocket();
 		Command<String> cmd = new QueryUpdateCmd(group,fileName);
 		return cmd.exec(socket);
 	}
 	
-	public Result<String> getDownloadStorageAddr(String group,String fileName) throws IOException{
+	@Override
+    public Result<String> getDownloadStorageAddr(String group, String fileName) throws IOException{
 		Socket socket = getSocket();
 		Command<String> cmd = new QueryDownloadCmd(group,fileName);
 		return cmd.exec(socket);
 	}
 	
+	@Override
 	public Result<List<GroupInfo>> getGroupInfos() throws IOException{
 		Socket socket = getSocket();
 		Command<List<GroupInfo>> cmd = new GroupInfoCmd();
 		return cmd.exec(socket);
 	}
 	
+	@Override
 	public Result<List<StorageInfo>> getStorageInfos(String group) throws IOException{
 		Socket socket = getSocket();
 		Command<List<StorageInfo>> cmd = new StorageInfoCmd(group);

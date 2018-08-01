@@ -10,11 +10,16 @@ import net.mikesu.fastdfs.data.UploadStorage;
 
 public interface TrackerClient {
 
-	public Result<UploadStorage> getUploadStorage() throws IOException;
-	public Result<String> getUpdateStorageAddr(String group,String fileName) throws IOException;
-	public Result<String> getDownloadStorageAddr(String group,String fileName) throws IOException;
-	public Result<List<GroupInfo>> getGroupInfos() throws IOException;
-	public Result<List<StorageInfo>> getStorageInfos(String group) throws IOException;
-	public void close() throws IOException;
-	
+    public Result<UploadStorage> getUploadStorage() throws IOException;
+
+    public Result<String> getUpdateStorageAddr(String group, String fileName) throws IOException;
+
+    public Result<String> getDownloadStorageAddr(String group, String fileName) throws IOException;
+
+    public Result<List<GroupInfo>> getGroupInfos() throws IOException;
+
+    public Result<List<StorageInfo>> getStorageInfos(String group) throws IOException;
+
+    public void close() throws IOException;
+
 }
