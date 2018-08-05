@@ -1,8 +1,8 @@
 package net.mikesu.fastdfs.command;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import net.mikesu.fastdfs.data.Result;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -14,7 +14,7 @@ public class ByteUploadCmd extends AbstractCmd<String> {
 
     @Override
     public Result<String> exec(Socket socket) throws IOException {
-        InputStream is = new ByteInputStream(fileByte, fileByte.length);
+        InputStream is = new ByteArrayInputStream(fileByte);
         request(socket.getOutputStream(), is);
         Response response = response(socket.getInputStream());
         if (response.isSuccess()) {

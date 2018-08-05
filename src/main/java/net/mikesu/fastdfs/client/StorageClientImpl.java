@@ -19,18 +19,21 @@ import java.util.Map;
 public class StorageClientImpl implements StorageClient {
 
     private Socket socket;
+
     private String host;
+
     private Integer port;
+
     private Integer connectTimeout = FastdfsClientConfig.DEFAULT_CONNECT_TIMEOUT * 1000;
+
     private Integer networkTimeout = FastdfsClientConfig.DEFAULT_NETWORK_TIMEOUT * 1000;
 
-    private Socket getSocket() throws IOException {
-        if (socket == null) {
+    private void initSocket() throws IOException {
+        if (socket == null || socket.isClosed()) {
             socket = new Socket();
             socket.setSoTimeout(networkTimeout);
             socket.connect(new InetSocketAddress(host, port), connectTimeout);
         }
-        return socket;
     }
 
     public StorageClientImpl(String address) {
@@ -48,7 +51,6 @@ public class StorageClientImpl implements StorageClient {
 
     @Override
     public void close() throws IOException {
-        Socket socket = getSocket();
         Command<Boolean> command = new CloseCmd();
         command.exec(socket);
         socket.close();
@@ -57,40 +59,49 @@ public class StorageClientImpl implements StorageClient {
 
     @Override
     public Result<String> upload(File file, String fileName, byte storePathIndex) throws IOException {
-        Socket socket = getSocket();
+        initSocket();
         UploadCmd uploadCmd = new UploadCmd(file, fileName, storePathIndex);
-        return uploadCmd.exec(socket);
+        Result<String> result = uploadCmd.exec(socket);
+        close();
+        return result;
     }
 
     @Override
     public Result<String> upload(byte[] file, String fileName, byte storePathIndex) throws IOException {
-        Socket socket = getSocket();
+        initSocket();
         ByteUploadCmd uploadCmd = new ByteUploadCmd(file, fileName, storePathIndex);
-        return uploadCmd.exec(socket);
+        Result<String> result = uploadCmd.exec(socket);
+        close();
+        return result;
     }
-
 
     @Override
     public Result<Boolean> delete(String group, String fileName) throws IOException {
-        Socket socket = getSocket();
+        initSocket();
         DeleteCmd deleteCmd = new DeleteCmd(group, fileName);
-        return deleteCmd.exec(socket);
+        Result<Boolean> result = deleteCmd.exec(socket);
+        close();
+        return result;
     }
 
     @Override
     public Result<Boolean> setMeta(String group, String fileName,
                                    Map<String, String> meta) throws IOException {
-        Socket socket = getSocket();
+        initSocket();
         SetMetaDataCmd setMetaDataCmd = new SetMetaDataCmd(group, fileName, meta);
-        return setMetaDataCmd.exec(socket);
+        Result<Boolean> result = setMetaDataCmd.exec(socket);
+        close();
+        return result;
     }
 
     @Override
     public Result<Map<String, String>> getMeta(String group, String fileName)
-            throws IOException {
-        Socket socket = getSocket();
+        throws IOException {
+        initSocket();
         GetMetaDataCmd getMetaDataCmd = new GetMetaDataCmd(group, fileName);
-        return getMetaDataCmd.exec(socket);
+        Result<Map<String, String>> result = getMetaDataCmd.exec(socket);
+        this.close();
+        return result;
     }
 
 }
